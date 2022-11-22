@@ -12,7 +12,6 @@ public class GameFrame extends JFrame {
     }
     public void createBoard(int size){
         Board board = new Board(size, boardPanel);
-        board.createMap();
         //boardPanel = board.getBoardPanel();
         //add(boardPanel);
     }

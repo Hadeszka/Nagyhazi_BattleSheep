@@ -7,7 +7,8 @@ import java.util.Map;
 
 
 
-public class Board extends HashMap<Point, Field> {
+public class Board {
+    HashMap<Point, Field> boardMap;
     private final int x_max = 13;
     private final int y_max = 6;
     private Field stepFrom;
@@ -22,7 +23,10 @@ public class Board extends HashMap<Point, Field> {
         boardPanel = panel;
         comboBox = new JComboBox(numberOfSheep);
         this.size = size;
+        boardMap = new HashMap<>();
+        createMap();
     }
+
 
     public JPanel getBoardPanel() {
         return boardPanel;
@@ -48,7 +52,7 @@ public class Board extends HashMap<Point, Field> {
             for(int y = 0; y<y_max;++y) {
                 if (isField(x, y)) {
                     Point coords = new Point(x, y);
-                    put(coords, new Field(this, boardPanel, coords, size));
+                    boardMap.put(coords, new Field(this, boardPanel, coords, size));
                 }
             }
         }
@@ -56,16 +60,16 @@ public class Board extends HashMap<Point, Field> {
     }
     public void setNeighbours(){
         for (Map.Entry<Point, Field> entry:
-             this.entrySet()) {
+             boardMap.entrySet()) {
             for(int x = -1, id = 0; x<=1; x+=2){
                 for(int y = -1; y<=1; ++y, ++id){
                     if(y == 0){
-                        if (containsKey(new Point(entry.getKey().x + 2*x, entry.getKey().y + y)))
-                            entry.getValue().AddNeighbour(id, this.get(new Point(entry.getKey().x + 2*x, entry.getKey().y + 2*y)));
+                        if (boardMap.containsKey(new Point(entry.getKey().x + 2*x, entry.getKey().y + y)))
+                            entry.getValue().AddNeighbour(id, boardMap.get(new Point(entry.getKey().x + 2*x, entry.getKey().y + 2*y)));
                     }
                     else
-                    if (containsKey(new Point(entry.getKey().x + x, entry.getKey().y + y)))
-                            entry.getValue().AddNeighbour(id, this.get(new Point(entry.getKey().x + x, entry.getKey().y + y)));
+                    if (boardMap.containsKey(new Point(entry.getKey().x + x, entry.getKey().y + y)))
+                            entry.getValue().AddNeighbour(id, boardMap.get(new Point(entry.getKey().x + x, entry.getKey().y + y)));
 
                 }
             }
