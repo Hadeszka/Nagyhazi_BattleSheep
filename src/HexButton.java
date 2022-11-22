@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import javax.swing.*;
 
 /**
@@ -19,6 +20,7 @@ import javax.swing.*;
  */
 public class HexButton extends JButton
 {
+    @Serial
     private static final long serialVersionUID = 4865976127980106774L;
 
     private Polygon hexagon = new Polygon();
