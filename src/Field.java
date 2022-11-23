@@ -13,6 +13,7 @@ public class Field {
 
 
     public Field(Board board, JPanel panel, Point coords, int size){
+        numberOfSheep = 0;
         this.board = board;
         neighbours = new ArrayList<>(6);
         for(int i = 0; i<6; ++i){

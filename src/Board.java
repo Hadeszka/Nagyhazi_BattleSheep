@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Random;
 
 
 public class Board {
@@ -18,6 +18,10 @@ public class Board {
     private Object numberOfSheep[] = new Object[0];
 
     private JComboBox comboBox;
+    public void putPlayers(){
+        boardMap.get(new Point(3,0)).SetNumberOfSheep(16);
+        boardMap.get(new Point(10,5)).SetNumberOfSheep(16);
+    }
 
     public Board(int size, JPanel panel){
         boardPanel = panel;
@@ -33,8 +37,10 @@ public class Board {
     }
 
     public boolean isField(int x, int y){
+        //minden második koordinátán legyen csak mező
         if( (x+y) % 2 == 0)
             return false;
+        //a sarkoknál a kihagyás legyen meg
         if(x + y <=2)
             return false;
         if(x_max-x+y <= 2)
@@ -43,6 +49,7 @@ public class Board {
             return false;
         if(y_max + x-y <= 2)
             return false;
+        //a mező közepénél legyen lyuk
         if( x == 6 && y == 3)
             return false;
         return true;
@@ -56,6 +63,7 @@ public class Board {
                 }
             }
         }
+        putPlayers();
         setNeighbours();
     }
     public void setNeighbours(){
@@ -92,7 +100,7 @@ public class Board {
     }
 
     public void setStepFrom(Field selected) {
-        this.stepFrom = selected;
+        stepFrom = selected;
     }
 
     public ArrayList<Field> getLegalSteps() {

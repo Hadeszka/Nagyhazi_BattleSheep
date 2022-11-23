@@ -7,6 +7,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
+import java.util.ArrayList;
 import javax.swing.*;
 
 /**
@@ -42,9 +43,9 @@ public class HexButton extends JButton
         return field;
     }
 
-    public void editLegalSteps(boolean visible){
+    public void editLegalSteps(boolean visible, ArrayList<Field> legalSteps){
         for (Field step:
-                field.LegalSteps()){
+                legalSteps){
             if(step != null){
                 step.getButton().setSelected(visible);
             }
@@ -95,28 +96,42 @@ public class HexButton extends JButton
         calculateCoords();
     }
 
+    @Override
+    public void paintImmediately(int x, int y, int w, int h) {
+        paintComponent(getGraphics());
+    }
 
-
-
-    public void stepFromSelection(boolean selected){
+    public void stepFromSelection(boolean selected, ArrayList<Field> legalSteps){
         super.setSelected(selected);
         field.setSelected(selected);
-        editLegalSteps(selected);
+        editLegalSteps(selected, legalSteps);
     }
+
 
     @Override
     protected void processMouseEvent(MouseEvent e)
     {
         if ( contains(e.getPoint()) && e.getID() == MouseEvent.MOUSE_CLICKED) {
-            if (getField().isStepFrom()){
-                stepFromSelection(false);
-            }
-            else {
-                if(getField().getBoard().getStepFrom() != null) {
-                    getField().getBoard().getStepFrom().getButton().stepFromSelection(false);
+            Field stepFrom = getField().getBoard().getStepFrom();
+            if(stepFrom != null) {
+                ArrayList<Field> legalSteps = stepFrom.LegalSteps();
+                if (legalSteps.contains(this.field)) {
+                    getField().SetNumberOfSheep(stepFrom.GetNumberOfSheep()-1);
+                    stepFrom.SetNumberOfSheep(1);
+                    stepFrom.getButton().stepFromSelection(false, legalSteps);
+
+                    return;
                 }
-                stepFromSelection(true);
             }
+                if (getField().isStepFrom()) {
+                    stepFromSelection(false, field.LegalSteps());
+                } else {
+                    if (stepFrom != null) {
+                        stepFrom.getButton().stepFromSelection(false, stepFrom.LegalSteps());
+                    }
+                    if(field.GetNumberOfSheep() > 1)
+                        stepFromSelection(true, field.LegalSteps());
+                }
         }
     }
 
@@ -151,6 +166,9 @@ public class HexButton extends JButton
     @Override
     protected void paintComponent(Graphics g)
     {
+
+        //super.paintComponent(g);
+
         if ( isSelected() )
         {
             g.setColor(Color.lightGray);
@@ -178,6 +196,7 @@ public class HexButton extends JButton
 
         Point loc = getLocation();
         g.drawString(getText(), textR.x-loc.x, textR.y-loc.y+fm.getAscent());
+        g.setColor(Color.blue);
     }
 
     @Override
