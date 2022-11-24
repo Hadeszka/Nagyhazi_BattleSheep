@@ -23,8 +23,8 @@ public class Board {
         boardMap.get(new Point(10,5)).SetNumberOfSheep(16);
     }
 
-    public Board(int size, JPanel panel){
-        boardPanel = panel;
+    public Board(int size){
+        boardPanel = new JPanel(null);
         comboBox = new JComboBox(numberOfSheep);
         this.size = size;
         boardMap = new HashMap<>();

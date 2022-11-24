@@ -1,6 +1,6 @@
 public class Main {
    public static void main(String[] args) {
-      GameFrame gameFrame = new GameFrame("BattleSheep");
+      GameVisual gameFrame = new GameVisual("BattleSheep");
       gameFrame.createBoard(40);
       gameFrame.createMenu();
       gameFrame.setUpGame(1000, 700);
