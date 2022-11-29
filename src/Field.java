@@ -23,13 +23,8 @@ public class Field {
         panel.add(button);
     }
 
-    public Field(int n, Player p, boolean e){
+    public Field(int n){
         numberOfSheep = n;
-        shepherd = p;
-        neighbours = new ArrayList<>(6);
-        for(int i = 0; i<6; ++i){
-            neighbours.add(i, null);
-        }
     }
 
     public Field(int n, Player p, ArrayList<Field> nbs){
@@ -65,6 +60,11 @@ public class Field {
 
     public void SetShepherd(Player p){
         shepherd = p;
+        //button.paintComponent(button.getGraphics());
+    }
+
+    public Player getShepherd() {
+        return shepherd;
     }
 
     public void SetNumberOfSheep(int n){
@@ -85,12 +85,24 @@ public class Field {
         return this == board.getStepFrom();
     }
 
-    public void setSelected(boolean selected){
+    public void setStepFrom(boolean selected){
+        button.setSelected(selected);
+        editLegalSteps(selected, this);
         if(selected){
             board.setStepFrom(this);
         }
         else
             board.setStepFrom(null);
+        getBoard().changeComboBox();
+    }
+
+    public void editLegalSteps(boolean visible, Field root){
+        for (Field step:
+                root.LegalSteps()){
+            if(step != null){
+                step.getButton().setSelected(visible);
+            }
+        }
     }
 
     public void AddNeighbour(int id, Field f){
@@ -101,13 +113,14 @@ public class Field {
         ArrayList<Field> steps = new ArrayList<>(6);
         for (int i = 0; i < 6; ++i) {
             if (IsNeighbourBlocked(GetNeighbour(i)))
-                steps.add(i, null);
+                ;
+                //steps.add(i, null);
             else {
                 Field first = this;
                 while (!first.IsNeighbourBlocked(first.GetNeighbour(i))) {
                     first = first.GetNeighbour(i);
                 }
-                steps.add(i, first);
+                steps.add(first);
             }
         }
         return steps;

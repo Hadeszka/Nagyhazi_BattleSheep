@@ -1,10 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 
 public class Board {
@@ -13,19 +11,48 @@ public class Board {
     private final int y_max = 6;
     private Field stepFrom;
     private ArrayList<Field> legalSteps;
+
+    private Player player1;
+    private Player player2;
+    private Player tmp;
+
     private JPanel boardPanel;
     private int size;
     private Object numberOfSheep[] = new Object[0];
-
+    private int selectedSheep;
     private JComboBox comboBox;
+    private JButton pass;
     public void putPlayers(){
-        boardMap.get(new Point(3,0)).SetNumberOfSheep(16);
-        boardMap.get(new Point(10,5)).SetNumberOfSheep(16);
+        Field player1Start = boardMap.get(new Point(3,0));
+        player1Start.SetNumberOfSheep(16);
+        player1Start.SetShepherd(player1);
+        player1.getSheeps().add(player1Start);
+        Field player2Start = boardMap.get(new Point(10,5));
+        player2Start.SetNumberOfSheep(16);
+        player2Start.SetShepherd(player2);
+        player2.getSheeps().add(player2Start);
+
     }
 
     public Board(int size){
         boardPanel = new JPanel(null);
+        player1 = new User(this);
+        player2 = new Robot(this);
+        tmp = player1;
+
         comboBox = new JComboBox(numberOfSheep);
+        comboBox.addActionListener(a->
+        {
+            if(stepFrom != null) {
+                if (comboBox.getSelectedItem() == null)
+                    selectedSheep = 0;
+                else
+                    selectedSheep = (int) comboBox.getSelectedItem();
+            }
+        });
+        comboBox.setBounds(100, 30, 50, 40);
+        boardPanel.add(comboBox);
+        selectedSheep = 0;
         this.size = size;
         boardMap = new HashMap<>();
         createMap();
@@ -34,6 +61,14 @@ public class Board {
 
     public JPanel getBoardPanel() {
         return boardPanel;
+    }
+
+    public int getSelectedSheep() {
+        return selectedSheep;
+    }
+
+    public void setSelectedSheep(int selectedSheep) {
+        this.selectedSheep = selectedSheep;
     }
 
     public boolean isField(int x, int y){
@@ -50,9 +85,7 @@ public class Board {
         if(y_max + x-y <= 2)
             return false;
         //a mező közepénél legyen lyuk
-        if( x == 6 && y == 3)
-            return false;
-        return true;
+        return x != 6 || y != 3;
     }
     public void createMap(){
         for(int x = 0;x<x_max;++x){
@@ -73,7 +106,7 @@ public class Board {
                 for(int y = -1; y<=1; ++y, ++id){
                     if(y == 0){
                         if (boardMap.containsKey(new Point(entry.getKey().x + 2*x, entry.getKey().y + y)))
-                            entry.getValue().AddNeighbour(id, boardMap.get(new Point(entry.getKey().x + 2*x, entry.getKey().y + 2*y)));
+                            entry.getValue().AddNeighbour(id, boardMap.get(new Point(entry.getKey().x + 2*x, entry.getKey().y)));
                     }
                     else
                     if (boardMap.containsKey(new Point(entry.getKey().x + x, entry.getKey().y + y)))
@@ -84,15 +117,20 @@ public class Board {
         }
     }
 
-   /* public void AddField(Field f){
-        //map.add(map.size(), f);
-    }*/
-
-    public int getX_max() {
-        return x_max;
+    public void setTmp(Player tmp) {
+        this.tmp = tmp;
     }
-    public int getY_max() {
-        return y_max;
+
+    public Player getTmp() {
+        return tmp;
+    }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
     }
 
     public Field getStepFrom() {
@@ -101,6 +139,15 @@ public class Board {
 
     public void setStepFrom(Field selected) {
         stepFrom = selected;
+    }
+    public void changeComboBox(){
+        if(comboBox.getItemCount() > 0)
+            comboBox.removeAllItems();
+        if(stepFrom != null) {
+            for (int i = 0; i < stepFrom.GetNumberOfSheep() ; ++i)
+                comboBox.addItem(i);
+        }
+        selectedSheep = 0;
     }
 
     public ArrayList<Field> getLegalSteps() {

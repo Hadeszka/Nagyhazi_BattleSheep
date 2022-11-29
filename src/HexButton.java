@@ -1,14 +1,13 @@
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serial;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 /**
  * A six sided toggle button. This is not guaranteed to be a perfect hexagon, it is just guaranteed to have six sides in
@@ -28,14 +27,23 @@ public class HexButton extends JButton
 
     private Field field;
 
+    private Point coords;
+    private int size;
+
+    public HexButton(){
+        super();
+    }
     public HexButton(Field field, Point coords, int size)
     {
+
+        this.coords = coords;
         this.field = field;
-        field.setButton(this);
+        this.size = size;
         setForeground(Color.black);
-        setBackground(Color.green);
+        setBackground(new Color(4,159,4));
         setBounds((int) ( coords.x*size*6/5), 100+(coords.y*size*2), (int) (1.73205081*size), 2*size);
         Integer num = field.GetNumberOfSheep();
+
         setText(num.toString());
     }
 
@@ -101,37 +109,12 @@ public class HexButton extends JButton
         paintComponent(getGraphics());
     }
 
-    public void stepFromSelection(boolean selected, ArrayList<Field> legalSteps){
-        super.setSelected(selected);
-        field.setSelected(selected);
-        editLegalSteps(selected, legalSteps);
-    }
-
 
     @Override
     protected void processMouseEvent(MouseEvent e)
     {
         if ( contains(e.getPoint()) && e.getID() == MouseEvent.MOUSE_CLICKED) {
-            Field stepFrom = getField().getBoard().getStepFrom();
-            if(stepFrom != null) {
-                ArrayList<Field> legalSteps = stepFrom.LegalSteps();
-                if (legalSteps.contains(this.field)) {
-                    getField().SetNumberOfSheep(stepFrom.GetNumberOfSheep()-1);
-                    stepFrom.SetNumberOfSheep(1);
-                    stepFrom.getButton().stepFromSelection(false, legalSteps);
-
-                    return;
-                }
-            }
-                if (getField().isStepFrom()) {
-                    stepFromSelection(false, field.LegalSteps());
-                } else {
-                    if (stepFrom != null) {
-                        stepFrom.getButton().stepFromSelection(false, stepFrom.LegalSteps());
-                    }
-                    if(field.GetNumberOfSheep() > 1)
-                        stepFromSelection(true, field.LegalSteps());
-                }
+            field.getBoard().getTmp().Step(field);
         }
     }
 
@@ -163,26 +146,29 @@ public class HexButton extends JButton
         hexagon = new Polygon(hexX, hexY, nPoints);
     }
 
+
+
+
     @Override
     protected void paintComponent(Graphics g)
     {
-
-        //super.paintComponent(g);
-
         if ( isSelected() )
         {
-            g.setColor(Color.lightGray);
+            g.setColor(Color.red);
         }
         else
         {
-            g.setColor(getBackground());
+            g.setColor(getForeground());
         }
+        g.drawPolygon(hexagon);
+
+        g.setColor(getBackground());
 
         g.fillPolygon(hexagon);
 
         g.setColor(getForeground());
 
-        g.drawPolygon(hexagon);
+
 
         FontMetrics fm = getFontMetrics(getFont());
         Rectangle viewR = getBounds();
@@ -195,8 +181,16 @@ public class HexButton extends JButton
                 viewR, iconR, textR, 0);
 
         Point loc = getLocation();
-        g.drawString(getText(), textR.x-loc.x, textR.y-loc.y+fm.getAscent());
-        g.setColor(Color.blue);
+        if(field.getShepherd() == field.getBoard().getPlayer1()) {
+            Image image1 = new ImageIcon("purpleSheep.png").getImage();
+            g.drawImage(image1, 10, 15, null);
+        }
+        if(field.getShepherd() == field.getBoard().getPlayer2()){
+            Image image2 = new ImageIcon("blueSheep1.png").getImage();
+            g.drawImage(image2, 10, 15, null);
+        }
+        g.drawString(getText(), 30, 70);
+
     }
 
     @Override
