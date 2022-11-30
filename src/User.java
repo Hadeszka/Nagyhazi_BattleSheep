@@ -30,8 +30,7 @@ public class User extends Player{
             field.SetNumberOfSheep(number);
             stepFrom.SetNumberOfSheep(stepFrom.GetNumberOfSheep() - number);
             stepFrom = null;
-            field.SetShepherd(this);
-            getSheeps().add(field);
+            addSheeps(field);
             getOtherPlayer().turn();
         }
         if(field == stepFrom){

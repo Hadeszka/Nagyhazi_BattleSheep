@@ -2,11 +2,16 @@ import java.util.ArrayList;
 
 public abstract class Player {
     private ArrayList<Field> sheeps;
-    private Board board;
+    private final Board board;
 
     public Player(Board b) {
         board = b;
         sheeps = new ArrayList<>();
+    }
+
+    public void addSheeps(Field field){
+        sheeps.add(field);
+        field.SetShepherd(this);
     }
 
     public abstract void Step(Field field);

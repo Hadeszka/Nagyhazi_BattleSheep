@@ -1,13 +1,7 @@
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serial;
-import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicButtonUI;
 
 /**
  * A six sided toggle button. This is not guaranteed to be a perfect hexagon, it is just guaranteed to have six sides in
@@ -25,43 +19,21 @@ public class HexButton extends JButton
 
     private Polygon hexagon = new Polygon();
 
-    private Field field;
+    private final Field field;
 
-    private Point coords;
-    private int size;
-
-    public HexButton(){
-        super();
-    }
+    //private Point coords;
+    //private int size;
     public HexButton(Field field, Point coords, int size)
     {
 
-        this.coords = coords;
+        //this.coords = coords;
         this.field = field;
-        this.size = size;
+        //this.size = size;
         setForeground(Color.black);
         setBackground(new Color(4,159,4));
         setBounds((int) ( coords.x*size*6/5), 100+(coords.y*size*2), (int) (1.73205081*size), 2*size);
         Integer num = field.GetNumberOfSheep();
-
         setText(num.toString());
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public void editLegalSteps(boolean visible, ArrayList<Field> legalSteps){
-        for (Field step:
-                legalSteps){
-            if(step != null){
-                step.getButton().setSelected(visible);
-            }
-        }
-    }
-
-    public void setNumber(Integer number){
-        setText(number.toString());
     }
 
     @Override
@@ -180,7 +152,6 @@ public class HexButton extends JButton
                 SwingUtilities.CENTER, SwingUtilities.CENTER, SwingUtilities.BOTTOM, SwingUtilities.CENTER,
                 viewR, iconR, textR, 0);
 
-        Point loc = getLocation();
         if(field.getShepherd() == field.getBoard().getPlayer1()) {
             Image image1 = new ImageIcon("purpleSheep.png").getImage();
             g.drawImage(image1, 10, 15, null);

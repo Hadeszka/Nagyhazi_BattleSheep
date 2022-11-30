@@ -26,8 +26,7 @@ public class Robot extends Player{
                 Field nextField = big.LegalSteps().get(randomField % big.LegalSteps().size());
                 nextField.SetNumberOfSheep(randomSheep % (big.GetNumberOfSheep()-1) +1);
                 big.SetNumberOfSheep(big.GetNumberOfSheep() - (randomSheep % (big.GetNumberOfSheep()-1) +1));
-                getSheeps().add(nextField);
-                nextField.SetShepherd(this);
+                addSheeps(nextField);
                 done = true;
             }
         }

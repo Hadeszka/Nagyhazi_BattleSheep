@@ -6,13 +6,15 @@ public class GameVisual {
         gameFrame = new JFrame(title);
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-    public void createBoard(int size){
+    public Board createBoard(int size){
         Board board = new Board(size);
         JPanel boardPanel = board.getBoardPanel();
         gameFrame.add(boardPanel);
+        return board;
     }
     public void createMenu(){
-        Menu menu = new Menu(gameFrame);
+        Menu menu = new Menu();
+        menu.createMenu(gameFrame);
     }
     public void setUpGame(int width, int height){
         gameFrame.pack();

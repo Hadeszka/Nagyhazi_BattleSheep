@@ -1,14 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class Field {
     private int numberOfSheep;
     private Player shepherd;
-    private HexButton button;
-    private ArrayList<Field> neighbours;
-    private Board board;
+    private final HexButton button;
+    private final ArrayList<Field> neighbours;
+    private final Board board;
 
 
 
@@ -22,45 +21,22 @@ public class Field {
         button = new HexButton(this, coords, size);
         panel.add(button);
     }
-
-    public Field(int n){
-        numberOfSheep = n;
-    }
-
-    public Field(int n, Player p, ArrayList<Field> nbs){
-        numberOfSheep = n;
-        shepherd = p;
-        neighbours = nbs;
-    }
-
     public HexButton getButton() {
         return button;
     }
-    public void setButton(HexButton button) {
-        this.button = button;
-    }
-
     public Field GetNeighbour(int id){
         return neighbours.get(id);
     }
-
-    public int GetNeighbourId(Field f){
-        return neighbours.indexOf(f);
-    }
-
     public int GetNumberOfSheep(){
         return numberOfSheep;
     }
 
     public boolean IsNeighbourBlocked(Field f){
-        if(f == null || f.GetNumberOfSheep() > 0)
-            return true;
-        return false;
+        return f == null || f.GetNumberOfSheep() > 0;
     }
 
     public void SetShepherd(Player p){
         shepherd = p;
-        //button.paintComponent(button.getGraphics());
     }
 
     public Player getShepherd() {
@@ -75,14 +51,6 @@ public class Field {
 
     public Board getBoard() {
         return board;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
-    public boolean isStepFrom(){
-        return this == board.getStepFrom();
     }
 
     public void setStepFrom(boolean selected){
@@ -112,10 +80,7 @@ public class Field {
     public ArrayList<Field> LegalSteps() {
         ArrayList<Field> steps = new ArrayList<>(6);
         for (int i = 0; i < 6; ++i) {
-            if (IsNeighbourBlocked(GetNeighbour(i)))
-                ;
-                //steps.add(i, null);
-            else {
+            if (!IsNeighbourBlocked(GetNeighbour(i))){
                 Field first = this;
                 while (!first.IsNeighbourBlocked(first.GetNeighbour(i))) {
                     first = first.GetNeighbour(i);

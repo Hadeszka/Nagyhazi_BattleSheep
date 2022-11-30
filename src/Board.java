@@ -1,8 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 
 public class Board {
@@ -10,36 +10,48 @@ public class Board {
     private final int x_max = 13;
     private final int y_max = 6;
     private Field stepFrom;
-    private ArrayList<Field> legalSteps;
 
     private Player player1;
     private Player player2;
     private Player tmp;
 
-    private JPanel boardPanel;
-    private int size;
-    private Object numberOfSheep[] = new Object[0];
+    private final JPanel boardPanel;
+    private final int size;
     private int selectedSheep;
     private JComboBox comboBox;
-    private JButton pass;
-    public void putPlayers(){
-        Field player1Start = boardMap.get(new Point(3,0));
+    public void putPlayers(Player p1, Player p2){
+        player1 = p1;
+        player2 = p2;
+        tmp = p1;
+
+        /*Field player1Start = boardMap.get(new Point(3,0));
         player1Start.SetNumberOfSheep(16);
         player1Start.SetShepherd(player1);
         player1.getSheeps().add(player1Start);
         Field player2Start = boardMap.get(new Point(10,5));
         player2Start.SetNumberOfSheep(16);
         player2Start.SetShepherd(player2);
-        player2.getSheeps().add(player2Start);
+        player2.getSheeps().add(player2Start);*/
 
+    }
+    public Field getRandomField(){
+        Random random = new Random();
+        int x = random.nextInt(0, 13);
+        int y = random.nextInt(0, 6);
+        while(!isField(x,y)){
+            x = random.nextInt(0, 13);
+            y = random.nextInt(0, 6);
+        }
+        return boardMap.get(new Point(x,y));
     }
 
     public Board(int size){
         boardPanel = new JPanel(null);
-        player1 = new User(this);
-        player2 = new Robot(this);
-        tmp = player1;
+       // player1 = new User(this);
+        //player2 = new User(this);
+        //tmp = player1;
 
+        Object[] numberOfSheep = new Object[0];
         comboBox = new JComboBox(numberOfSheep);
         comboBox.addActionListener(a->
         {
@@ -96,7 +108,7 @@ public class Board {
                 }
             }
         }
-        putPlayers();
+        //putPlayers();
         setNeighbours();
     }
     public void setNeighbours(){
@@ -132,11 +144,6 @@ public class Board {
     public Player getPlayer2() {
         return player2;
     }
-
-    public Field getStepFrom() {
-        return stepFrom;
-    }
-
     public void setStepFrom(Field selected) {
         stepFrom = selected;
     }
@@ -150,11 +157,4 @@ public class Board {
         selectedSheep = 0;
     }
 
-    public ArrayList<Field> getLegalSteps() {
-        return legalSteps;
-    }
-
-    public void setLegalSteps() {
-        legalSteps = stepFrom.LegalSteps();
-    }
 }
