@@ -11,14 +11,14 @@ public class Field {
 
 
 
-    public Field(Board board, JPanel panel, Point coords, int size){
+    public Field(Board board, JPanel panel, Point coords){
         numberOfSheep = 0;
         this.board = board;
         neighbours = new ArrayList<>(6);
         for(int i = 0; i<6; ++i){
             neighbours.add(i, null);
         }
-        button = new HexButton(this, coords, size);
+        button = new HexButton(this, coords);
         panel.add(button);
     }
     public HexButton getButton() {

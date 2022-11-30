@@ -6,8 +6,8 @@ public class GameVisual {
         gameFrame = new JFrame(title);
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-    public Board createBoard(int size){
-        Board board = new Board(size);
+    public Board createBoard(){
+        Board board = new Board();
         JPanel boardPanel = board.getBoardPanel();
         gameFrame.add(boardPanel);
         return board;

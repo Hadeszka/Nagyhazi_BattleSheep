@@ -16,22 +16,13 @@ public class Board {
     private Player tmp;
 
     private final JPanel boardPanel;
-    private final int size;
     private int selectedSheep;
     private JComboBox comboBox;
+    private final JLabel yourTurn;
     public void putPlayers(Player p1, Player p2){
         player1 = p1;
         player2 = p2;
         tmp = p1;
-
-        /*Field player1Start = boardMap.get(new Point(3,0));
-        player1Start.SetNumberOfSheep(16);
-        player1Start.SetShepherd(player1);
-        player1.getSheeps().add(player1Start);
-        Field player2Start = boardMap.get(new Point(10,5));
-        player2Start.SetNumberOfSheep(16);
-        player2Start.SetShepherd(player2);
-        player2.getSheeps().add(player2Start);*/
 
     }
     public Field getRandomField(){
@@ -45,11 +36,16 @@ public class Board {
         return boardMap.get(new Point(x,y));
     }
 
-    public Board(int size){
+    public void setYourTurn(String color) {
+        yourTurn.setText(color+"'s turn");
+    }
+
+    public Board(){
         boardPanel = new JPanel(null);
-       // player1 = new User(this);
-        //player2 = new User(this);
-        //tmp = player1;
+
+        yourTurn = new JLabel("Purple's turn");
+        yourTurn.setBounds(150, 30, 100, 40);
+        boardPanel.add(yourTurn);
 
         Object[] numberOfSheep = new Object[0];
         comboBox = new JComboBox(numberOfSheep);
@@ -65,7 +61,6 @@ public class Board {
         comboBox.setBounds(100, 30, 50, 40);
         boardPanel.add(comboBox);
         selectedSheep = 0;
-        this.size = size;
         boardMap = new HashMap<>();
         createMap();
     }
@@ -104,11 +99,10 @@ public class Board {
             for(int y = 0; y<y_max;++y) {
                 if (isField(x, y)) {
                     Point coords = new Point(x, y);
-                    boardMap.put(coords, new Field(this, boardPanel, coords, size));
+                    boardMap.put(coords, new Field(this, boardPanel, coords));
                 }
             }
         }
-        //putPlayers();
         setNeighbours();
     }
     public void setNeighbours(){
@@ -131,6 +125,7 @@ public class Board {
 
     public void setTmp(Player tmp) {
         this.tmp = tmp;
+        setYourTurn(tmp == player1? "Purple":"Blue");
     }
 
     public Player getTmp() {

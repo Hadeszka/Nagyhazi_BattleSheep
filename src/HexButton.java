@@ -21,17 +21,13 @@ public class HexButton extends JButton
 
     private final Field field;
 
-    //private Point coords;
-    //private int size;
-    public HexButton(Field field, Point coords, int size)
+    public HexButton(Field field, Point coords)
     {
 
-        //this.coords = coords;
         this.field = field;
-        //this.size = size;
         setForeground(Color.black);
         setBackground(new Color(4,159,4));
-        setBounds((int) ( coords.x*size*6/5), 100+(coords.y*size*2), (int) (1.73205081*size), 2*size);
+        setBounds(( coords.x*40*6/5), 100+(coords.y*40*2), (int) (1.73205081*40), 2*40);
         Integer num = field.GetNumberOfSheep();
         setText(num.toString());
     }
