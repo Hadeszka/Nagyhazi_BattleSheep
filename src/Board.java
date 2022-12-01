@@ -1,30 +1,21 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 
-public class Board {
+public class Board implements Serializable {
     HashMap<Point, Field> boardMap;
     private final int x_max = 13;
     private final int y_max = 6;
     private Field stepFrom;
-
-    private Player player1;
-    private Player player2;
     private Player tmp;
-
     private final JPanel boardPanel;
     private int selectedSheep;
     private JComboBox comboBox;
     private final JLabel yourTurn;
-    public void putPlayers(Player p1, Player p2){
-        player1 = p1;
-        player2 = p2;
-        tmp = p1;
-
-    }
     public Field getRandomField(){
         Random random = new Random();
         int x = random.nextInt(0, 13);
@@ -125,20 +116,13 @@ public class Board {
 
     public void setTmp(Player tmp) {
         this.tmp = tmp;
-        setYourTurn(tmp == player1? "Purple":"Blue");
+        setYourTurn(tmp.getColor());
     }
 
     public Player getTmp() {
         return tmp;
     }
 
-    public Player getPlayer1() {
-        return player1;
-    }
-
-    public Player getPlayer2() {
-        return player2;
-    }
     public void setStepFrom(Field selected) {
         stepFrom = selected;
     }
@@ -152,4 +136,11 @@ public class Board {
         selectedSheep = 0;
     }
 
+    public void replaceFields(HashMap<Point, Field> newMap){
+        boardMap.forEach((key, value)->{
+            Field newValue = newMap.get(key);
+            value.SetShepherd(newValue.getShepherd());
+            value.SetNumberOfSheep(newValue.GetNumberOfSheep());
+        });
+    }
 }

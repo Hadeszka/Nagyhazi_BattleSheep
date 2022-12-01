@@ -1,8 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Field {
+public class Field implements Serializable {
     private int numberOfSheep;
     private Player shepherd;
     private final HexButton button;

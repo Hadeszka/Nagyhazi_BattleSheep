@@ -1,9 +1,20 @@
+import java.io.Serializable;
+
 /**
  * Egy játék inicializálásáért, elindításáért, illetve befejezéséért felelős osztály.
  */
-public class Game {
+public class Game implements Serializable {
+    private final GameVisual gameVisual;
     private Board map;
+    private Player player1;
+    private boolean player1CanMove = true;
+    private Player player2;
+    private boolean player2CanMove = true;
 
+
+    public Game(Menu menu){
+        gameVisual = new GameVisual(menu);
+    }
     /**
      * Inicializál, majd elindít egy új játékot.
      * Létrehozza a játéktáblát, a menüt, majd a játékosokat.
@@ -11,11 +22,7 @@ public class Game {
      * Tartalmazza, hogy a 2 játékosból hány robot.
      */
     public void StartGame(int numberOfRobots){
-        GameVisual gameFrame = new GameVisual("BattleSheep");
-        map = gameFrame.createBoard();
-        gameFrame.createMenu();
-        gameFrame.setUpGame(1000, 700);
-
+        map = gameVisual.StartGame();
         putPlayers(numberOfRobots);
     }
 
@@ -32,20 +39,59 @@ public class Game {
         while(field1 == field2){
             field2 = map.getRandomField();
         }
-        Player player1 = new User(map);
-        Player player2;
-        switch (numberOfRobots) {
-            case 0 -> player2 = new User(map);
-            default -> player2 = new Robot(map);
+        player1 = new User(map, this, "Purple");
+        if (numberOfRobots == 0) {
+            player2 = new User(map, this, "Blue");
+        } else {
+            player2 = new Robot(map, this, "Blue");
         }
         player1.addSheeps(field1);
         field1.SetNumberOfSheep(16);
 
         player2.addSheeps(field2);
         field2.SetNumberOfSheep(16);
-        map.putPlayers(player1, player2);
+        map.setTmp(player1);
     }
 
-    public void EndGame(){}
+    public int PlayerCantMove(Player player) {
+        if(player == player1) {
+            player1CanMove = false;
+            if (!player2CanMove){
+                EndGame(player1);
+                return 1;
+            }
+        }
+        else{
+            player2CanMove = false;
+            if(!player1CanMove) {
+                EndGame(player2);
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public void EndGame(Player winner){
+
+        gameVisual.endGame(winner);
+    }
+
+    public void overrideGame(Game oldGame){
+        player1 = oldGame.getPlayer1();
+        player2 = oldGame.getPlayer2();
+        player1CanMove = oldGame.player1CanMove;
+        player2CanMove = oldGame.player2CanMove;
+        map.replaceFields(oldGame.map.boardMap);
+        map.setTmp(oldGame.map.getTmp());
+        map.setYourTurn(oldGame.map.getTmp().getColor());
+    }
 
 }

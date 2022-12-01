@@ -1,11 +1,16 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Player {
-    private ArrayList<Field> sheeps;
+public abstract class Player implements Serializable {
+    private final ArrayList<Field> sheeps;
     private final Board board;
+    private final Game game;
+    private final String color;
 
-    public Player(Board b) {
+    public Player(Board b, Game g, String c) {
         board = b;
+        game = g;
+        color = c;
         sheeps = new ArrayList<>();
     }
 
@@ -15,10 +20,6 @@ public abstract class Player {
     }
 
     public abstract void Step(Field field);
-
-    public ArrayList<Field> getSheeps() {
-        return sheeps;
-    }
 
     public boolean IsBlocked(){
         if(getSteppableSheep().size() == 0)
@@ -44,16 +45,26 @@ public abstract class Player {
     }
 
     public void turn() {
-        if(!IsBlocked())
-            board.setTmp(this);
+        board.setTmp(this);
+        if(IsBlocked()) {
+            if(game.PlayerCantMove(this) == 0)
+              getOtherPlayer().turn();
+        }
     }
 
     public Player getOtherPlayer(){
-        return getBoard().getPlayer1()== this? getBoard().getPlayer2() : getBoard().getPlayer1();
+        return game.getPlayer1()== this? game.getPlayer2() : game.getPlayer1();
     }
 
     public Board getBoard() {
         return board;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
+    public String getColor() {
+        return color;
+    }
 }

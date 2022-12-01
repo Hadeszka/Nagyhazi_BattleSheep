@@ -148,13 +148,9 @@ public class HexButton extends JButton
                 SwingUtilities.CENTER, SwingUtilities.CENTER, SwingUtilities.BOTTOM, SwingUtilities.CENTER,
                 viewR, iconR, textR, 0);
 
-        if(field.getShepherd() == field.getBoard().getPlayer1()) {
-            Image image1 = new ImageIcon("purpleSheep.png").getImage();
+        if(field.getShepherd() != null) {
+            Image image1 = new ImageIcon(field.getShepherd().getColor()+"Sheep.png").getImage();
             g.drawImage(image1, 10, 15, null);
-        }
-        if(field.getShepherd() == field.getBoard().getPlayer2()){
-            Image image2 = new ImageIcon("blueSheep1.png").getImage();
-            g.drawImage(image2, 10, 15, null);
         }
         g.drawString(getText(), 30, 70);
 

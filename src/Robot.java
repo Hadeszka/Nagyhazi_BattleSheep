@@ -3,15 +3,20 @@ import java.util.Comparator;
 import java.util.Random;
 
 public class Robot extends Player{
-    public Robot(Board b){
-        super(b);
+    public Robot(Board b, Game g, String c){
+        super(b, g, c);
     }
 
     @Override
     public void turn() {
-        super.turn();
-        if(!IsBlocked())
+        if(!IsBlocked()) {
+            getBoard().setTmp(this);
             Step(null);
+        }
+        else
+            if(getGame().PlayerCantMove(this) == 0)
+                getOtherPlayer().turn();
+
     }
     public void Step(Field field) {
         Random random = new Random();
