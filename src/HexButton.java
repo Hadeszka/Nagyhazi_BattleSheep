@@ -21,6 +21,13 @@ public class HexButton extends JButton
 
     private final Field field;
 
+    /**
+     * A HexButton konstruktora, beállítja a különböző színeket,
+     * a megadott koordináta szerint helyezi el, illetve méretezi a gombot,
+     * és beállítja a hozzá tartozó mezőn található bárányok számát
+     * @param field
+     * @param coords
+     */
     public HexButton(Field field, Point coords)
     {
 
@@ -77,7 +84,11 @@ public class HexButton extends JButton
         paintComponent(getGraphics());
     }
 
-
+    /**
+     * Feldolgozza, ha az egérrel a rá kirajzolt hatszögbe kattintunk->
+     * ->meghívja az aktuális játékos step függvényét
+     * @param e the mouse event
+     */
     @Override
     protected void processMouseEvent(MouseEvent e)
     {
@@ -87,7 +98,9 @@ public class HexButton extends JButton
     }
 
 
-
+    /**
+     * kiszámolja a hatszög fontos pontjait(ezt nem én írtam)
+     */
     private void calculateCoords()
     {
         int w = getWidth()-1;
@@ -115,8 +128,12 @@ public class HexButton extends JButton
     }
 
 
-
-
+    /**
+     * Beállítja a hatszög színeit, attól függően, hogy ki van-e választva,
+     * illetve kirajzolja a hatszöget, ha a hozzá tartozó mezőn van bárány,
+     * akkor azt kirajzolja, illetve kiírja, hogy hány bárány található rajta
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g)
     {

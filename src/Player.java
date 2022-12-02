@@ -3,8 +3,8 @@ import java.util.ArrayList;
 
 public abstract class Player implements Serializable {
     private final ArrayList<Field> sheeps;
-    private final Board board;
-    private final Game game;
+    private Board board;
+    private Game game;
     private final String color;
 
     public Player(Board b, Game g, String c) {
@@ -14,6 +14,24 @@ public abstract class Player implements Serializable {
         sheeps = new ArrayList<>();
     }
 
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public void setBoard(Board board){
+        this.board = board;
+    }
+
+    public ArrayList<Field> getSheeps() {
+        return sheeps;
+    }
+
+    /**
+     * hozzáadja a játékos bárányait tartalmazó mezőkhoz a megadottat,
+     * illetve a megadott mezőn beállítja a játékost shepherdnek
+     * @param field
+     * a megadott mező
+     */
     public void addSheeps(Field field){
         sheeps.add(field);
         field.SetShepherd(this);
@@ -21,6 +39,11 @@ public abstract class Player implements Serializable {
 
     public abstract void Step(Field field);
 
+    /**
+     * @return
+     * Visszaadja, hogy van-e léptethető báránya a játékosnak,
+     * ha pedig van, akkor van-e olyan mező, ahová léptetheti őket
+     */
     public boolean IsBlocked(){
         if(getSteppableSheep().size() == 0)
             return true;
@@ -33,7 +56,10 @@ public abstract class Player implements Serializable {
         return blocked;
     }
 
-
+    /**
+     * @return
+     * Visszaadja azokat a mezőket, ahol egynél több báránya van a játékosnak
+     */
     public ArrayList<Field> getSteppableSheep() {
         ArrayList<Field> steppableSheep = new ArrayList<>();
         for (Field f :
@@ -44,6 +70,10 @@ public abstract class Player implements Serializable {
         return steppableSheep;
     }
 
+    /**
+     * beállytja a játékost az aktuális játékosnak,
+     * majd ha a játékos blokkolva van, akkor ezt jelzi a game-nek
+     */
     public void turn() {
         board.setTmp(this);
         if(IsBlocked()) {
@@ -52,6 +82,10 @@ public abstract class Player implements Serializable {
         }
     }
 
+    /**
+     * @return
+     * visszaadja a másik játékost
+     */
     public Player getOtherPlayer(){
         return game.getPlayer1()== this? game.getPlayer2() : game.getPlayer1();
     }

@@ -7,7 +7,7 @@ import java.util.Random;
 
 
 public class Board implements Serializable {
-    HashMap<Point, Field> boardMap;
+    private HashMap<Point, Field> boardMap;
     private final int x_max = 13;
     private final int y_max = 6;
     private Field stepFrom;
@@ -16,6 +16,12 @@ public class Board implements Serializable {
     private int selectedSheep;
     private JComboBox comboBox;
     private final JLabel yourTurn;
+
+    /**
+     * Visszaad egy random választott mezőt, amely a pályán rajta is van.
+     * @return
+     * random mező a pályáról
+     */
     public Field getRandomField(){
         Random random = new Random();
         int x = random.nextInt(0, 13);
@@ -27,10 +33,38 @@ public class Board implements Serializable {
         return boardMap.get(new Point(x,y));
     }
 
+    /**
+     * Beállítja, hogy mit írjon ki a JLabel, azaz hogy melyik játékos köre van jelenleg
+     * @param color
+     * a körön lévő játékos színe
+     */
     public void setYourTurn(String color) {
         yourTurn.setText(color+"'s turn");
     }
 
+    /**
+     * Visszaadja, hogy jelenleg mit ír ki a JLabel, azaz ki van körön
+     * @return
+     * visszaadja a kiírt szöveget
+     */
+    public JLabel getYourTurn() {
+        return yourTurn;
+    }
+
+    /**
+     * @return
+     *Visszaadja a mezőket tartalmazó hashMap-et
+     */
+    public HashMap<Point, Field> getBoardMap() {
+        return boardMap;
+    }
+
+    /**
+     * A Board osztály konstruktora, létrehoz egy Jpanel, majd ehhez hozzáad egy JLabelt, ami kiírja, hogy
+     * melyik játékos van körön, egy JComboBox-ot, amelyben ki lehet választani,
+     * hogy hány bárányt szeretnénk léptetni, illetve meghívja a createMap függvényt,
+     * amivel létrehozza a pályát
+     */
     public Board(){
         boardPanel = new JPanel(null);
 
@@ -56,19 +90,41 @@ public class Board implements Serializable {
         createMap();
     }
 
-
+    /**
+     * @return
+     * Visszaadja a használt JPanelt
+     */
     public JPanel getBoardPanel() {
         return boardPanel;
     }
 
+    /**
+     * @return
+     * Visszaadja, hogy jelenleg hány darab bárányt választottunk ki léptetésre
+     */
     public int getSelectedSheep() {
         return selectedSheep;
     }
 
+    /**
+     * Beállítja, a megadott értékre a léptetendő bárányok számát
+     * @param selectedSheep
+     * A léptetendő bárányok száma
+     */
     public void setSelectedSheep(int selectedSheep) {
         this.selectedSheep = selectedSheep;
     }
 
+    /**
+     * Visszaadja, hogy a megadott koordinátájú ponton található-e mező, azaz arra a koordinátára
+     * kell e mezőt létrehozni.
+     * @param x
+     * az x koordináta
+     * @param y
+     * az y koordináta
+     * @return
+     * true, ha ott kell lennie mezőnek, false, ha nem
+     */
     public boolean isField(int x, int y){
         //minden második koordinátán legyen csak mező
         if( (x+y) % 2 == 0)
@@ -85,6 +141,11 @@ public class Board implements Serializable {
         //a mező közepénél legyen lyuk
         return x != 6 || y != 3;
     }
+
+    /**
+     * Létrehozza a pályát, azokon a koordinátákon, ahol kell mezőnek lennie,
+     * majd hozzáírja a boardMap-ban tárolt mezőkhöz.
+     */
     public void createMap(){
         for(int x = 0;x<x_max;++x){
             for(int y = 0; y<y_max;++y) {
@@ -96,6 +157,12 @@ public class Board implements Serializable {
         }
         setNeighbours();
     }
+
+    /**
+     * Minden egyes boardMapben tárolt mezőnek beállítja a szomszédait a boardMap mezőjei közül,
+     * ezeket a mező neighbours listájában tárolja.
+     * Minden egyes irányban megnézi, hogy van-e szomszédja, balra-fel átlósan, fel, jobbra-fel átlósan, stb.
+     */
     public void setNeighbours(){
         for (Map.Entry<Point, Field> entry:
              boardMap.entrySet()) {
@@ -114,18 +181,39 @@ public class Board implements Serializable {
         }
     }
 
+    /**
+     * Átállítja az aktuális körön levő játékos kilétét a megadott játékosra, majd a JLabel szövegét
+     * is ennek megfelelően változtatja
+     * @param tmp
+     * ez a játékos lesz mostantól a körön levő
+     */
     public void setTmp(Player tmp) {
         this.tmp = tmp;
         setYourTurn(tmp.getColor());
     }
 
+    /**
+     * @return
+     * Visszaadja a körön levő játékost
+     */
     public Player getTmp() {
         return tmp;
     }
 
+    /**
+     * @param selected
+     * Beállitja az aktuálisan kiválasztott mezőt, ahonnan a játékos lépni szeretne
+     * a bárányaival
+     */
     public void setStepFrom(Field selected) {
         stepFrom = selected;
     }
+
+    /**
+     * Törli a JComboBox tartalmát, majd újra beállítja az aktuálisan kiválasztott mezőnek
+     * megfelelően, ahonnan a játékos a bárányait szeretné léptetni
+     * Majd a léptetendő bárányok számát nullázza, mert újra ki kell választani, hogy hányat léptessünk
+     */
     public void changeComboBox(){
         if(comboBox.getItemCount() > 0)
             comboBox.removeAllItems();
@@ -136,6 +224,12 @@ public class Board implements Serializable {
         selectedSheep = 0;
     }
 
+    /**
+     * Felülírja a mezőkön tartózkodó bárányok számát, illetve az őket birtokló shepherd kilétét.
+     * Technikailag klónozzuk a megadott mezőt
+     * @param newMap
+     * Ez alapján a tábla alapján írjuk felül a mezők tartalmát
+     */
     public void replaceFields(HashMap<Point, Field> newMap){
         boardMap.forEach((key, value)->{
             Field newValue = newMap.get(key);

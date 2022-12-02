@@ -74,6 +74,47 @@ public class Menu  implements Serializable {
         frame.setVisible(true);
     }
 
+    /**
+     * A megadott nevű fájlból beolvas egy objektumot, majd ezt visszaadja
+     * @param filename
+     * a megadott fájlnév
+     * @return
+     * a beolvasott objektum
+     * @throws IOException
+     * Ha a fájl nevével, megnyitásával bármi probléma van
+     * @throws ClassNotFoundException
+     * ha a fájl tartalma hibás
+     */
+    public Object getFromFile(String filename) throws IOException, ClassNotFoundException {
+        FileInputStream filenameIn = new FileInputStream(filename+".txt");
+        ObjectInputStream stringStreamIn = new ObjectInputStream(filenameIn);
+        Object object =  stringStreamIn.readObject();
+        stringStreamIn.close();
+        return object;
+    }
+    /**
+     * A megadott nevű fájlba kiírja a megadott objektumot
+     * @param filename
+     * a megadott fájlnév
+     * @param object
+     * a megadott objektum
+     * @throws IOException
+     * Ha a fájl nevével, megnyitásával bármi probléma van
+     */
+    public void putInFile(String filename, Object object) throws IOException {
+        FileOutputStream filenameOut = new FileOutputStream(filename+".txt");
+        ObjectOutputStream stringStreamOut = new ObjectOutputStream(filenameOut);
+        stringStreamOut.writeObject(object);
+        stringStreamOut.flush();
+        stringStreamOut.close();
+    }
+
+    /**
+     * Kirajzol egy új ablakot, amiben található egy textfield és egy gomb,
+     * a textfieldben megadva egy nevet, majd a gombra kattintva elmentjük
+     * az aktuális játékot a megadott nevű fájlba, majd a fájl nevét
+     * elmentjük a filenames.txt fájlba, az ablak pedig bezárul
+     */
     public void save() {
         JFrame frame = new JFrame("Save");
         JPanel panel = new JPanel(new FlowLayout());
@@ -83,38 +124,29 @@ public class Menu  implements Serializable {
         panel.add(textField);
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(a->{
-            try {
-                FileOutputStream fileOutputStream = new FileOutputStream(textField.getText()+".txt");
-                ObjectOutputStream objectOutputStream
-                        = new ObjectOutputStream(fileOutputStream);
-                objectOutputStream.writeObject(actualGame);
-                objectOutputStream.flush();
-                objectOutputStream.close();
-
-                File names = new File("filenames.txt");
-                if(names.length() == 0){
-                    fileNames = new ArrayList<>();
+            if(textField.getText() != null) {
+                try {
+                    putInFile(textField.getText(), actualGame);
+                } catch (IOException e) {
+                    JFrame errorFrame = new JFrame("ERROR");
+                    JOptionPane.showMessageDialog(errorFrame, "Something is wrong with the saved file!");
                 }
-                else{
-                    FileInputStream filenameIn = new FileInputStream("filenames.txt");
-                    ObjectInputStream stringStreamIn = new ObjectInputStream(filenameIn);
-                    fileNames = (ArrayList<String>) stringStreamIn.readObject();
-                    stringStreamIn.close();
 
+                try {
+                    File names = new File("filenames.txt");
+                    if (names.length() == 0)
+                        fileNames = new ArrayList<>();
+                    else
+                        fileNames = (ArrayList<String>) getFromFile("filenames");
+                    fileNames.add(textField.getText());
+                    putInFile("filenames", fileNames);
 
+                } catch (IOException | ClassNotFoundException e) {
+                    JFrame errorFrame = new JFrame("ERROR");
+                    JOptionPane.showMessageDialog(errorFrame, "The filenames are damaged!");
                 }
-                fileNames.add(textField.getText());
-
-                FileOutputStream filenameOut = new FileOutputStream("filenames.txt");
-                ObjectOutputStream stringStreamOut = new ObjectOutputStream(filenameOut);
-                stringStreamOut.writeObject(fileNames);
-                stringStreamOut.flush();
-                stringStreamOut.close();
-
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                frame.dispose();
             }
-            frame.dispose();
         });
         panel.add(saveButton);
         frame.add(panel);
@@ -124,34 +156,49 @@ public class Menu  implements Serializable {
 
     }
 
+    /**
+     * Létrehoz egy új ablakot egy JComboBox-al, aminek a tartalma
+     * a filenames.txt-ből beolvasott fájlnevek.
+     * (ha egyet se tartalmaz a filenames.txt, akkor a load függvény
+     * egy popup windowban figyelmeztet a hibáról)
+     * Egy fájlnevet kiválasztva, majd a gombra kattintva
+     * felülírjuk az aktuális játékot a betöltött játékkal,
+     * az ablak pedig bezárul
+     */
     public void load()  {
+        if((new File("filenames.txt")).length() == 0){
+            JFrame frame = new JFrame("ERROR");
+            JOptionPane.showMessageDialog(frame, "There is no saved file!");
+            return;
+        }
         try {
-            FileInputStream filenameIn = new FileInputStream("filenames.txt");
-            ObjectInputStream stringStreamIn = new ObjectInputStream(filenameIn);
-            fileNames = (ArrayList<String>) stringStreamIn.readObject();
-            stringStreamIn.close();
+            fileNames = (ArrayList<String>) getFromFile("filenames");
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            JFrame frame = new JFrame("ERROR");
+            JOptionPane.showMessageDialog(frame, "The filenames are damaged!");
+            return;
         }
 
         JFrame frame = new JFrame("Load");
         JPanel panel = new JPanel(new FlowLayout());
+
         JLabel label = new JLabel("Choose file:");
         panel.add(label);
+
         String[] names = fileNames.toArray(new String[0]);
         JComboBox<String> comboBox = new JComboBox<>(names);
         panel.add(comboBox);
+
         JButton loadButton = new JButton("Load");
         loadButton.addActionListener(a->{
             Game oldGame;
             if(comboBox.getSelectedItem() != null) {
                 try {
-                    FileInputStream fileInputStream = new FileInputStream(comboBox.getSelectedItem() + ".txt");
-                    ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-                    oldGame = (Game) objectInputStream.readObject();
-                    objectInputStream.close();
+                    oldGame = (Game) getFromFile((String) comboBox.getSelectedItem());
                 } catch (IOException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+                    JFrame errorFrame = new JFrame("ERROR");
+                    JOptionPane.showMessageDialog(errorFrame, comboBox.getSelectedItem()+".txt file doesn't exist or it's damaged!");
+                    return;
                 }
                 frame.dispose();
                 actualGame.overrideGame(oldGame);

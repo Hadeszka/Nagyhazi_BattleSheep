@@ -7,6 +7,11 @@ public class Robot extends Player{
         super(b, g, c);
     }
 
+    /**
+     * Amennyiben nincs blokkolva a játékos, beállítja magát aktuális játékosnak, majd lép,
+     * ha viszont blokkolva van, szól a game-nek, hogy nem tud lépni,
+     * majd ha még nem ért véget a játék, szól a másik játékosnak, hogy jöhet
+     */
     @Override
     public void turn() {
         if(!IsBlocked()) {
@@ -18,6 +23,17 @@ public class Robot extends Player{
                 getOtherPlayer().turn();
 
     }
+
+    /**
+     * A Robot játékos lépése:
+     * A mezők közül, ahol léptethető bárányi vannak, kiválasztja azt ahol a legtöbb bárány van,
+     * majd az onnan történő szabályosan elérhető mezőre léptet random számú bárányt.
+     * Egy mezőre se léphet szabályosan, akkor az következő legtöbb bárányt számláló mezőjéről
+     * próbál lépni.
+     * Amint ez megtörtént jelzi a másik játékosnak, hogy a köre véget ért.
+     * @param field
+     * nem lényeges
+     */
     public void Step(Field field) {
         Random random = new Random();
         int randomField = random.nextInt(0, 100000);
