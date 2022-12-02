@@ -1,4 +1,8 @@
+import java.awt.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Egy játék inicializálásáért, elindításáért, illetve befejezéséért felelős osztály.
@@ -39,12 +43,14 @@ public class Game implements Serializable {
         while(field1 == field2){
             field2 = map.getRandomField();
         }
-        player1 = new User(map, this, "Purple");
+        player1 = new User(map, gameVisual, "Purple");
         if (numberOfRobots == 0) {
-            player2 = new User(map, this, "Blue");
+             player2 = new User(map, gameVisual, "Blue");
         } else {
-            player2 = new Robot(map, this, "Blue");
+             player2 = new Robot(map, gameVisual, "Blue");
         }
+        player1.setOtherPlayer(player2);
+        player2.setOtherPlayer(player1);
         player1.addSheeps(field1);
         field1.SetNumberOfSheep(16);
 
@@ -62,17 +68,17 @@ public class Game implements Serializable {
      * 1-et ad vissza, ha vége a játéknak, 0-t, ha még nincs
      */
     public int PlayerCantMove(Player player) {
-        if(player == player1) {
+        if(player.getColor() == "Purple") {
             player1CanMove = false;
             if (!player2CanMove){
-                EndGame(player1);
+                EndGame(player);
                 return 1;
             }
         }
         else{
             player2CanMove = false;
             if(!player1CanMove) {
-                EndGame(player2);
+                EndGame(player);
                 return 1;
             }
         }
@@ -87,7 +93,7 @@ public class Game implements Serializable {
         return player2CanMove;
     }
 
-    public Player getPlayer1() {
+   public Player getPlayer1() {
         return player1;
     }
 
@@ -112,17 +118,65 @@ public class Game implements Serializable {
      * a játék, amely felülírja az addigit
      */
     public void overrideGame(Game oldGame){
-        oldGame.player1.setBoard(map);
+        /*oldGame.player1.setBoard(map);
         player1 = oldGame.getPlayer1();
-        player1.setGame(this);
-        oldGame.player1.setBoard(map);
+        oldGame.player1 = player1;
+        player1.setGame(oldGame);
+        oldGame.player2.setBoard(map);
         player2 = oldGame.getPlayer2();
-        player2.setGame(this);
-        player1CanMove = oldGame.player1CanMove;
-        player2CanMove = oldGame.player2CanMove;
+        oldGame.player2 = player2;
+        player2.setGame(oldGame);*/
         map.replaceFields(oldGame.map.getBoardMap());
-        map.setTmp(oldGame.map.getTmp());
+        if(oldGame.map.getTmp().getColor().equals("Purple"))
+            map.setTmp(player1);
+        else
+            map.setTmp(player2);
         map.setYourTurn(oldGame.map.getTmp().getColor());
+
+        player1.setSheeps(new ArrayList<>());
+        for (Field f:
+             oldGame.player1.getSheeps()) {
+            Point key = null;
+            for (Map.Entry<Point, Field> entry:oldGame.map.getBoardMap().entrySet()
+                 ) {
+                if(entry.getValue().equals(f))
+                    key = entry.getKey();
+            }
+
+            player1.addSheeps(map.getBoardMap().get(key));
+        }
+
+        player2.setSheeps(new ArrayList<>());
+        for (Field f:
+                oldGame.player2.getSheeps()) {
+            Point key = null;
+            for (Map.Entry<Point, Field> entry:oldGame.map.getBoardMap().entrySet()
+            ) {
+                if(entry.getValue().equals(f))
+                    key = entry.getKey();
+            }
+
+            player2.addSheeps(map.getBoardMap().get(key));
+        }
+        //player1.setSheeps(oldGame.player1.getSheeps());
+        player1.setBoard(map);
+        player1.setCanMove(oldGame.player1.CanMove());
+
+
+        //player2.setSheeps(oldGame.player2.getSheeps());
+        player2.setBoard(map);
+        player2.setCanMove(oldGame.player2.CanMove());
+
+        /*player1 = oldGame.player1;
+        player2 = oldGame.player2;
+        player1.setOtherPlayer(player2);
+        player2.setOtherPlayer(player1);
+        player1.setBoard(map);
+        player2.setBoard(map);*/
+
+        //player1CanMove = oldGame.player1CanMove;
+        //player2CanMove = oldGame.player2CanMove;
+
     }
 
 }

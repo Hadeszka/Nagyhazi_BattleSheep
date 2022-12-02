@@ -2,22 +2,35 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public abstract class Player implements Serializable {
-    private final ArrayList<Field> sheeps;
+    private ArrayList<Field> sheeps;
     private Board board;
-    private Game game;
+    private GameVisual gameVisual;
+    private Player otherPlayer;
     private final String color;
+    private boolean canMove = true;
 
-    public Player(Board b, Game g, String c) {
+    public Player(Board b, GameVisual g, String c) {
         board = b;
-        game = g;
+        gameVisual = g;
         color = c;
         sheeps = new ArrayList<>();
     }
 
-    public void setGame(Game game) {
-        this.game = game;
+    public GameVisual getGameVisual() {
+        return gameVisual;
     }
 
+    public void setOtherPlayer(Player otherPlayer) {
+        this.otherPlayer = otherPlayer;
+    }
+
+   /* public void setGame(Game game) {
+        this.game = game;
+    }*/
+
+    public void setSheeps(ArrayList<Field> s){
+        sheeps = s;
+    }
     public void setBoard(Board board){
         this.board = board;
     }
@@ -35,6 +48,14 @@ public abstract class Player implements Serializable {
     public void addSheeps(Field field){
         sheeps.add(field);
         field.SetShepherd(this);
+    }
+
+    public void setCanMove(boolean canMove) {
+        this.canMove = canMove;
+    }
+
+    public boolean CanMove() {
+        return canMove;
     }
 
     public abstract void Step(Field field);
@@ -77,8 +98,9 @@ public abstract class Player implements Serializable {
     public void turn() {
         board.setTmp(this);
         if(IsBlocked()) {
-            if(game.PlayerCantMove(this) == 0)
-              getOtherPlayer().turn();
+            setCanMove(false);
+            if(getOtherPlayer().IsBlocked())
+                gameVisual.endGame(getOtherPlayer());
         }
     }
 
@@ -87,16 +109,16 @@ public abstract class Player implements Serializable {
      * visszaadja a másik játékost
      */
     public Player getOtherPlayer(){
-        return game.getPlayer1()== this? game.getPlayer2() : game.getPlayer1();
+        return otherPlayer;
     }
 
     public Board getBoard() {
         return board;
     }
 
-    public Game getGame() {
+    /*public Game getGame() {
         return game;
-    }
+    }*/
 
     public String getColor() {
         return color;

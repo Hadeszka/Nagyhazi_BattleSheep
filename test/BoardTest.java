@@ -13,14 +13,14 @@ public class BoardTest {
 
     @Test
     public void setGetTmpTest(){
-        Player p = new User(new Board(), new Game(new Menu()), "Blue");
+        Player p = new User(new Board(), new GameVisual(new Menu()), "Blue");
         board.setTmp(p);
         Assert.assertSame(p, board.getTmp());
     }
 
     @Test
     public void setYourTurnTest(){
-        Player p = new User(new Board(), new Game(new Menu()), "Blue");
+        Player p = new User(new Board(), new GameVisual(new Menu()), "Blue");
         board.setTmp(p);
         Assert.assertEquals("Blue's turn", board.getYourTurn().getText());
     }

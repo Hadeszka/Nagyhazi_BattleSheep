@@ -10,7 +10,7 @@ public class FieldTest {
     @Test
     public void setGetShepherdTest(){
         Assert.assertSame(null, field.getShepherd());
-        field.SetShepherd(new User(new Board(), new Game(new Menu()), "Blue"));
+        field.SetShepherd(new User(new Board(), new GameVisual(new Menu()), "Blue"));
         Assert.assertNotSame(null, field.getShepherd());
     }
 

@@ -3,7 +3,7 @@ import java.util.Comparator;
 import java.util.Random;
 
 public class Robot extends Player{
-    public Robot(Board b, Game g, String c){
+    public Robot(Board b, GameVisual g, String c){
         super(b, g, c);
     }
 
@@ -18,10 +18,11 @@ public class Robot extends Player{
             getBoard().setTmp(this);
             Step(null);
         }
-        else
-            if(getGame().PlayerCantMove(this) == 0)
-                getOtherPlayer().turn();
-
+        else{
+            setCanMove(false);
+            if(getOtherPlayer().IsBlocked())
+                    getGameVisual().endGame(getOtherPlayer());
+        }
     }
 
     /**

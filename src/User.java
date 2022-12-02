@@ -1,6 +1,6 @@
 public class User extends Player{
     private Field stepFrom;
-    public User(Board b, Game g, String c){
+    public User(Board b, GameVisual g, String c){
         super(b, g, c);
         stepFrom = null;
     }

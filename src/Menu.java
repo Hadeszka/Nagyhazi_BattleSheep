@@ -151,7 +151,7 @@ public class Menu  implements Serializable {
         panel.add(saveButton);
         frame.add(panel);
         frame.setSize(400, 300);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
 
     }
@@ -207,7 +207,7 @@ public class Menu  implements Serializable {
         panel.add(loadButton);
         frame.add(panel);
         frame.setSize(500, 400);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
 }

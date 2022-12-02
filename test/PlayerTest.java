@@ -5,9 +5,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PlayerTest {
-    Player p = new User(new Board(), new Game(new Menu()), "Blue");
+    Player p = new User(new Board(), new GameVisual(new Menu()), "Blue");
 
-
+    @Test
+    public void playerCantMoveTest(){
+        p.setCanMove(false);
+        Assert.assertFalse(p.CanMove());
+    }
     @Test
     public void addSheepTest(){
         Assert.assertEquals(0, p.getSheeps().size());
